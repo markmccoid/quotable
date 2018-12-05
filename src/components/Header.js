@@ -1,7 +1,9 @@
 import React, { useContext } from 'react';
 import { Link } from '@reach/router';
 import styled from 'styled-components';
+
 import { AppContext } from '../DataProvider';
+import MyAlert from './Common/MyAlert';
 
 const Wrapper = styled.div`
   display: flex;
@@ -52,6 +54,16 @@ const Header = () => {
         <NavLink to="/view">View Quotes</NavLink>
         <Summary>{quoteData.length}</Summary>
       </LinkCountWrapper>
+      <MyAlert
+        title="Close and lose changes?"
+        okButtonText="Yes, Close"
+        onConfirm={() => console.log('onClose')}
+        onCancel={() => console.log('cancelled')}
+      >
+          {
+            (onConfirm) => <a onClick={onConfirm}>Close</a>
+          }
+        </MyAlert>
     </Wrapper>
   )
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import { getQuoteData, deleteQuote, addQuote } from './fileAccess/remoteFileAccess';
+import { getQuoteData, deleteQuote, addQuote, updateQuote } from './fileAccess/remoteFileAccess';
 
 export const AppContext = React.createContext();
 
@@ -69,6 +69,13 @@ class DataProvider extends React.Component {
     // Get the new list of authros
     this._updateQuoteData(updatedQuotes);
   }
+
+  updateQuote = async (quoteObj) => {
+    // update the passed quote based on ID in the quoteObj
+    let updatedQuotes = await updateQuote(quoteObj);
+    // Get the new list of authros
+    this._updateQuoteData(updatedQuotes);
+  }
   /**
    * Filter quotes by selectedAuthors array, selectedTags array
    * and (soon) search quote text
@@ -103,6 +110,7 @@ class DataProvider extends React.Component {
             actions: { 
               deleteQuote: this.deleteQuote,
               addQuote: this.addQuote,
+              updateQuote: this.updateQuote,
               filterQuotes: this.filterQuotes,
               randomQuote: this.randomQuote,
             }

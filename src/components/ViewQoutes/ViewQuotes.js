@@ -1,5 +1,4 @@
 import React from 'react';
-import { Router } from '@reach/router';
 import styled from 'styled-components';
 
 
@@ -12,7 +11,6 @@ import { AppContext } from '../../DataProvider';
 
 import FilterBar from './FilterBar';
 import FilteredQuotes from './FilteredQuotes';
-import { updateQuote } from '../../fileAccess/remoteFileAccess';
 
 const Wrapper = styled.div`
   display: flex;
@@ -43,10 +41,6 @@ class ViewQuotes extends React.Component {
   }
   _setFilterRating = (rating) => {
     this.setState({ rating })
-  }
-  onUpdateQuote = async (quoteObj, refreshContext) => {
-    let updatedQuotes = await updateQuote(quoteObj);
-    refreshContext(updatedQuotes)
   }
   render() { 
     return(
@@ -84,7 +78,7 @@ class ViewQuotes extends React.Component {
                         this.props.navigate('/view')
                       }
                     }
-                    updateQuote={(quoteObj) => this.onUpdateQuote(quoteObj, value.actions.updateQuoteData)}   
+                    updateQuote={(quoteObj) => value.actions.updateQuote(quoteObj)}   
                   />
                 
               </Wrapper>  

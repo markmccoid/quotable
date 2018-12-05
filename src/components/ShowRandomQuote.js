@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../DataProvider';
 
@@ -36,9 +36,15 @@ const ShowRandomQuote = (props) => {
   useEffect(() => {
     fetch('http://www.splashbase.co/api/v1/images/random?images_only=true')
       .then(response => response.json())
-      .then(imageObj => setRandomImage(imageObj.url))
-    
+      .then(imageObj => safeSetRandomImage(imageObj.url))
   }, [props.path]);
+
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => (mountedRef.current = false)
+  }, []);
+  const safeSetRandomImage = (...args) => mountedRef.current && setRandomImage(...args)
   console.log(props)
   return (
     <React.Fragment>

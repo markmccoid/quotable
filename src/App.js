@@ -23,9 +23,7 @@ const Wrapper = styled.div`
 const Error = (props) => (<div>{props}</div>)
 const Home = () => (<div></div>)
 class App extends Component {
-  componentDidMount() {
-    navigate("/");
-  }
+
   render() {
     let memory = createMemorySource("/");
     let history = createHistory(memory);

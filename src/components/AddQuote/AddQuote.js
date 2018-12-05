@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import TagPicker from '../AddQuote/TagPicker';
 import SearchInput from '../Common/SearchInput';
 import QuickView from './QuickView';
+import MyAlert from '../Common/MyAlert';
 import { AppContext } from '../../DataProvider';
 
 // Used in conjunction with author search functionality
@@ -111,7 +112,7 @@ const AddQuote = (props) => {
     }
     
     const clearInputs = () => {
-      setState({ author: '', authorBio: '', quote: '', currentTags: undefined, rating: 0 })
+      setState({ author: '', authorBio: '', quote: '', currentTags: undefined, rating: 0 });
     }
 
     return (
@@ -183,7 +184,12 @@ const AddQuote = (props) => {
             </RowWrapper>
             <ButtonWrapper>
               <Button onClick={onAddQuote}> Add Quote</Button>
-              <Button onClick={clearInputs}> Clear </Button>
+              <MyAlert
+                title="Clear quote"
+                onConfirm={clearInputs}
+              >
+               {(onConfirm) => <Button onClick={onConfirm}> Clear </Button>}
+              </MyAlert>
             </ButtonWrapper>
           
             {authorQuotes.length > 0 && <QuickView author={state.author} authorQuotes={authorQuotes}/>}
