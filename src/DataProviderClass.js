@@ -1,30 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import _ from 'lodash';
 
 import { getQuoteData, deleteQuote, addQuote, updateQuote } from './fileAccess/remoteFileAccess';
 
 export const AppContext = React.createContext();
 
-const DataProvider = (props) => {
+class DataProvider extends React.Component {
   
-  const [quoteData, setQuoteData] = useState([])
-  const [authors, setAuthors] = useState([])
-  const [tags, setTags] = useState([])
+  state = {
+    quoteData: [],
+    authors: [],
+    tags: []
+  };
 
-  useEffect(() => {
-    _refreshQuoteData()
-  }, [])
+  componentDidMount() {
+    this._refreshQuoteData();
+  }
 
-  const _refreshQuoteData = async () => {
+  _refreshQuoteData = async () => {
     // Get quotes from disk (quotes.json)
-    const quoteData = await getQuoteData()
-    setAuthors(_getAuthors(quoteData))
-    setTags(_getTags(quoteData))
-    setQuoteData(quoteData)
+    const quoteData = await getQuoteData();
+    let authors = this._getAuthors(quoteData);
+    let tags = this._getTags(quoteData);
+    this.setState({ quoteData: quoteData, authors, tags });
   }
   // Get Authors with count of quotes
   // [{ author, count }]
-  const _getAuthors = (quoteData) => {
+  _getAuthors = (quoteData) => {
     // let authors = _.uniq(quoteData.map(quoteObj => quoteObj.author));
     // return _.sortBy(authors);
     let authorsObj = quoteData.reduce((accum, quote) => {
@@ -38,7 +40,7 @@ const DataProvider = (props) => {
   /**
    * Return array of unique tags []
    */
-  const _getTags = (quoteData) => {
+  _getTags = (quoteData) => {
     let tags =  _.chain(quoteData)
     .map(tag => tag.tags) // Get just tags
     .flatten() // flatten array of arrays to a single array
@@ -48,38 +50,37 @@ const DataProvider = (props) => {
     return tags
   }
   
-  const _updateQuoteData = (quoteData) => {
-    setAuthors(_getAuthors(quoteData))
-    setTags(_getTags(quoteData))
-    setQuoteData(quoteData)
+  _updateQuoteData = (quoteData) => {
+    let authors = this._getAuthors(quoteData);
+    let tags = this._getTags(quoteData);
+    this.setState({ quoteData: quoteData, authors, tags });
   }
   
-  const onDeleteQuote = async (quoteId) => {
+  deleteQuote = async (quoteId) => {
     // Modify the file
     let updatedQuotes = await deleteQuote(quoteId);
     // Get the new list of authros
-    _updateQuoteData(updatedQuotes);
+    this._updateQuoteData(updatedQuotes);
   }
   
-  const onAddQuote = async (quoteObj) => {
+  addQuote = async (quoteObj) => {
     // Modify the file
     let updatedQuotes = await addQuote(quoteObj);
     // Get the new list of authros
-    console.log(updatedQuotes)
-    _updateQuoteData(updatedQuotes);
+    this._updateQuoteData(updatedQuotes);
   }
 
-  const onUpdateQuote = async (quoteObj) => {
+  updateQuote = async (quoteObj) => {
     // update the passed quote based on ID in the quoteObj
     let updatedQuotes = await updateQuote(quoteObj);
     // Get the new list of authros
-    _updateQuoteData(updatedQuotes);
+    this._updateQuoteData(updatedQuotes);
   }
   /**
    * Filter quotes by selectedAuthors array, selectedTags array
    * and (soon) search quote text
    */
-  const filterQuotes = (quoteData, selectedAuthors, selectedTags, searchText, rating) => {
+  filterQuotes = (quoteData, selectedAuthors, selectedTags, searchText, rating) => {
     // Filter authors
     let quotes = selectedAuthors.length > 0 ? 
       quoteData.filter(quote => selectedAuthors.indexOf(quote.author) !== -1)
@@ -96,34 +97,29 @@ const DataProvider = (props) => {
     }
     return _.sortBy(quotes, ['author']);
   }
-  const randomQuote = () => {
+  randomQuote = () => {
+    let { quoteData } = this.state;
     console.log(quoteData)
     let randomNum = Math.floor(Math.random() * Math.floor(quoteData.length))
     return quoteData[randomNum] || null
   }
-
-  const exportQuotes = () => {
-    console.log(quoteData)
+  render() {
+    return (
+      <AppContext.Provider value={{
+            ...this.state, 
+            actions: { 
+              deleteQuote: this.deleteQuote,
+              addQuote: this.addQuote,
+              updateQuote: this.updateQuote,
+              filterQuotes: this.filterQuotes,
+              randomQuote: this.randomQuote,
+            }
+          }}
+        >
+        {this.props.children}
+      </AppContext.Provider>
+    )
   }
-  return (
-    <AppContext.Provider value={{
-          quoteData,
-          authors,
-          tags,
-          actions: { 
-            deleteQuote: onDeleteQuote,
-            addQuote: onAddQuote,
-            updateQuote: onUpdateQuote,
-            filterQuotes: filterQuotes,
-            randomQuote: randomQuote,
-            exportQuotes: exportQuotes,
-          }
-        }}
-      >
-      {props.children}
-    </AppContext.Provider>
-  )
-  
 }
 
 export default DataProvider;

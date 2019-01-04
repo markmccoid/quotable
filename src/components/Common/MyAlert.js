@@ -26,13 +26,20 @@ const MyAlert = (props) => {
 };
 
 MyAlert.propTypes = {
+  /* title of the prompt */
   title: PropTypes.string,
+  /* text under the title of the prompt */
   text: PropTypes.string,
+  /* Sweetalert2 type icon. 5 options - success, error, warning, info, question https://sweetalert2.github.io/#popup-types */
   type: PropTypes.string,
+  /* confirm button text */
   confirmButtonText: PropTypes.string,
+  /* cancel button text */
   cancelButtonText: PropTypes.string,
-  onCancel: PropTypes.func,
+  /* confirm function to run if confirm button pressed */
   onConfirm: PropTypes.func,
+  /* cancel function to run if cancel button pressed */
+  onCancel: PropTypes.func,
 }
 
 MyAlert.defaultProps = {

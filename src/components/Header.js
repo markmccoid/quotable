@@ -18,6 +18,9 @@ const Title = styled(Link)`
   font-family: 'Pacifico', cursive;
   text-decoration: none;
   color: black;
+  &:active, &:focus {
+    text-decoration: none;
+  }
 `;
 const NavLink = styled(Link)`
   margin: 10px;

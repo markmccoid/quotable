@@ -1,10 +1,10 @@
-import React from 'react';
-import { navigate } from '@reach/router';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import * as queryString from 'query-string';
 import { Select, Input, Button } from 'antd';
 
 import TagPicker from '../AddQuote/TagPicker';
+import { AppContext } from '../../DataProvider';
 
 const Option = Select.Option;
 
@@ -40,6 +40,8 @@ const FieldLabel = styled.div`
 
 const FilterBar = (props) => {
   const { authors } = props;
+  const { actions: { exportQuotes }} = useContext(AppContext)
+  console.log('state', exportQuotes)
   return (
     <Wrapper>
       <FieldWrapper>
@@ -90,6 +92,11 @@ const FilterBar = (props) => {
         >
           {[1,2,3,4,5].map(rating => <Select.Option key={rating}>{rating}</Select.Option>)}
         </Select>
+        <Button type="primary"
+          onClick={() => exportQuotes()}
+        >
+          Export
+        </Button>
       </FieldWrapper>
     </Wrapper>
   )

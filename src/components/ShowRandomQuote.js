@@ -37,7 +37,7 @@ const ShowRandomQuote = (props) => {
     fetch('http://www.splashbase.co/api/v1/images/random?images_only=true')
       .then(response => response.json())
       .then(imageObj => safeSetRandomImage(imageObj.url))
-  }, [props.path]);
+  }, []);
 
   const mountedRef = useRef(false);
   useEffect(() => {
@@ -59,7 +59,7 @@ const ShowRandomQuote = (props) => {
               </AuthorDiv>
           </Container>
         </QuoteWrapper>
-        : null
+        : <div>loading...</div>
       }
     </React.Fragment>
   )
